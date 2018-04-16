@@ -27,4 +27,4 @@ end
 ## Todo
 
 - [x] Plug
-- [] Push health check
+- [ ] Push health check
