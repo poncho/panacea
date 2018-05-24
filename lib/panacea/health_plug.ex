@@ -9,15 +9,15 @@ defmodule Panacea.HealthPlug do
 
   def init(opts), do: opts
 
-  def call(conn = %Plug.Conn{path_info: ["_health"], method: "GET"}, opts) do
-    conn
-    |> put_resp_content_type("application/json", "UTF-8")
-    |> send_resp(200, build_health_response())
-    |> halt()
-  end
-
-  def call(conn, _opts) do
-    conn
+  def call(conn = %Plug.Conn{path_info: [path], method: "GET"}, opts) do
+    if path == Application.get_env(:panacea, :endpoint) do
+      conn
+      |> put_resp_content_type("application/json", "UTF-8")
+      |> send_resp(200, build_health_response())
+      |> halt()
+    else
+      conn
+    end
   end
 
   def build_health_response do
