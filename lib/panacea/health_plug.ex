@@ -9,6 +9,9 @@ defmodule Panacea.HealthPlug do
 
   def init(opts), do: opts
 
+  def call(conn = %Plug.Conn{path_info: [], method: "GET"}, opts) do
+    conn
+  end
   def call(conn = %Plug.Conn{path_info: [path], method: "GET"}, opts) do
     if path == Application.get_env(:panacea, :endpoint) do
       conn
