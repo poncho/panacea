@@ -24,6 +24,8 @@ defmodule Panacea.HealthPlug do
     end
   end
 
+  # Checks if path is a valid health endpoint
+  @spec is_health_path(String.t() | [String.t()] | nil, String.t()) :: boolean
   defp is_health_path(nil, path) do
     is_health_path(@default_health_endpoint, path)
   end
@@ -34,6 +36,8 @@ defmodule Panacea.HealthPlug do
     health_path == path
   end
 
+  # Creates the health JSON response
+  @spec build_health_response :: String.t()
   defp build_health_response do
     %{
       "success" => true,
