@@ -3,6 +3,8 @@ defmodule Panacea.HealthPlug do
   Health Plug for health check of service.
   """
 
+  @default_health_endpoint "_health"
+
   require Logger
 
   import Plug.Conn
@@ -23,7 +25,7 @@ defmodule Panacea.HealthPlug do
   end
 
   defp is_health_path(nil, path) do
-    false
+    is_health_path(@default_health_endpoint, path)
   end
   defp is_health_path(health_paths, path) when is_list(health_paths) do
     Enum.member?(health_paths, path)
