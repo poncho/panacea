@@ -11,7 +11,7 @@ defmodule Panacea.HealthPlug do
 
   def init(opts), do: opts
 
-  def call(conn = %Plug.Conn{path_info: path_info, method: "GET"}, opts) do
+  def call(conn = %Plug.Conn{path_info: path_info, method: "GET"}, _opts) do
     path = Enum.join(path_info, "/")
 
     if is_health_path(Application.get_env(:panacea, :endpoint), path) do
@@ -30,10 +30,17 @@ defmodule Panacea.HealthPlug do
     is_health_path(@default_health_endpoint, path)
   end
   defp is_health_path(health_paths, path) when is_list(health_paths) do
-    Enum.member?(health_paths, path)
+    Enum.any?(health_paths, fn health_path ->
+      equal_paths(health_path, path)
+    end)
   end
   defp is_health_path(health_path, path) when is_binary(health_path) do
-    health_path == path
+    equal_paths(health_path, path)
+  end
+
+  # Checks if both path are the same
+  defp equal_paths(path1, path2) do
+    String.trim(path1, "/") == String.trim(path2, "/")
   end
 
   # Creates the health JSON response
