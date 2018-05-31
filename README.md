@@ -32,18 +32,56 @@ config :panacea,
 
 If no endpoint is configured, the default health endpoint is `_health`
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `panacea` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:panacea, "~> 0.1.0"}
-  ]
-end
+### Drone
+If you are using drone for your deployments you can activate drone data to appear in your health JSON
+```json
+{
+  "timestamp": "2018-05-31T22:24:04.742422Z",
+  "success": true,
+  "drone": {
+    "commit": {
+      "sha": "jhsfjah8712812908u12lkjr1kjr12r",
+      "link": "https://test.link/commit",
+      "branch": "master",
+      "author": "poncho"
+    },
+    "build": {
+      "number": "124",
+      "link": "https://test.link",
+      "event": "push"
+    }
+  }
+}
 ```
 
-## Todo
+Activate it by adding this to your panacea configuration
+```elixir
+config :panacea,
+  drone: true
+```
 
-- [x] Plug
-- [ ] Push health check
+You can also specify which drone variables you want by adding the list of fields to the configuration instead
+```elixir
+config :panacea,
+  drone: [
+    :build_event
+    :commit_link
+  ]
+```
+
+This is the list of valid drone variables:
+```elixir
+:build_number
+:build_event
+:build_link
+:commit_branch
+:commit_link
+:commit_author
+:commit_sha 
+```
+ 
+ 
+ 
+ 
+ 
+ 

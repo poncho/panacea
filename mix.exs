@@ -5,7 +5,7 @@ defmodule Panacea.MixProject do
     [
       app: :panacea,
       version: "0.1.0",
-      elixir: "~> 1.6",
+      elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -22,7 +22,7 @@ defmodule Panacea.MixProject do
   defp deps do
     [
       {:cowboy, "~> 2.3", only: [:dev]},
-      {:plug, "~> 1.5"},
+      {:plug, "~> 1.3"},
       {:poison, "~> 3.1"}
     ]
   end

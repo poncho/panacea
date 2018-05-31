@@ -9,6 +9,8 @@ defmodule Panacea.HealthPlug do
 
   import Plug.Conn
 
+  alias Panacea.Drone
+
   def init(opts), do: opts
 
   def call(conn = %Plug.Conn{path_info: path_info, method: "GET"}, _opts) do
@@ -50,6 +52,7 @@ defmodule Panacea.HealthPlug do
       "success" => true,
       "timestamp" => DateTime.utc_now
     }
+    |> Drone.setup
     |> Poison.encode!
   end
 end
