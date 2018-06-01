@@ -1,6 +1,6 @@
 # Panacea
 
-> The goddess of universal health
+> [The goddess of universal health](https://en.wikipedia.org/wiki/Panacea)
 
 A simple health check JSON endpoint
 ```json
@@ -19,7 +19,7 @@ def deps do
 end
 ```
 
-Add the **Panacea.Plug** to the `endpoint.ex` file before the Router plug to enable the `_health` endpoint.
+If you are using the Phoenix Framework add the **Panacea.Plug** to the `endpoint.ex` file before the Router plug to enable the `_health` endpoint.
 
 ```elixir
 plug Panacea.HealthPlug
