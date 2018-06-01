@@ -12,6 +12,13 @@ A simple health check JSON endpoint
 
 ## Installation
 
+Add the following to your `mix.exs`:
+```elixir
+def deps do
+  [{:panacea, github: "poncho/panacea", tag: "v1.1.0"}]
+end
+```
+
 Add the **Panacea.Plug** to the `endpoint.ex` file before the Router plug to enable the `_health` endpoint.
 
 ```elixir
