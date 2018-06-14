@@ -10,28 +10,56 @@ defmodule Panacea.Olympus.Reporter do
   alias Panacea.Olympus.Manager
   alias Panacea.Olympus.HealthState
 
-  @report_interval 5_000
+  @report_interval 30_000
+  @min_report_interval 5_000
 
   ## Client API
 
   @doc """
   Starts the health reporter.
   """
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, :ok, opts)
+  @spec start_link(list) :: any()
+  def start_link(_opts) do
+    GenServer.start_link(__MODULE__, :ok, [name: __MODULE__])
+  end
+
+  @doc """
+  Obtains the health state report
+  """
+  @spec view_health :: HealthState.t()
+  def view_health do
+    GenServer.call(__MODULE__, :view_health)
   end
 
   ## Server Callbacks
 
   def init(:ok) do
-    Logger.info "Olympus Health system online!"
+    name =
+     case Application.get_env(:panacea, :olympus) do
+       %{service_name: name} when is_binary(name) and name != "" ->
+          name
+        
+        _ ->
+          number =
+            9999
+            |> :rand.uniform
+            |> to_string
 
+          "app-" <> number
+     end
+
+    Logger.info "Olympus Health system for app #{name} online!"
+  
     state = %HealthState{
-      name: Application.get_env(:olympus_client, :service_name, "default")
+      name: name
     }
 
     schedule_report()
     {:ok, state}
+  end
+
+  def handle_call(:view_health, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_info(:report_health, state) do 
@@ -51,7 +79,23 @@ defmodule Panacea.Olympus.Reporter do
   # Schedules next health report with the report interval
   @spec schedule_report :: any() 
   defp schedule_report do
-    Process.send_after(self(), :report_health, @report_interval)
+    interval = get_next_interval()
+    Process.send_after(self(), :report_health, interval)
+  end
+
+  # Obtains the next interval from config if exists
+  @spec get_next_interval :: integer
+  defp get_next_interval do
+    interval = 
+      case Application.get_env(:panacea, :olympus) do
+        %{report_every: interval} when is_integer(interval) ->
+          interval
+
+        _ ->
+          @report_interval
+      end
+
+    interval > @min_report_interval && interval || @min_report_interval
   end
 
   # Updates the last report time in state

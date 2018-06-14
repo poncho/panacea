@@ -3,11 +3,13 @@ defmodule Panacea.Application do
 
   use Application
 
+  require Logger
+
   @doc """
   Starts the health reporter
   """
   def start(_type, _args) do
-    IO.inspect("Starting Panacea Application...")
+    Logger.info "Starting Panacea..."
     opts = [strategy: :one_for_one]
     Supervisor.start_link(get_children(), opts)
   end
@@ -20,8 +22,11 @@ defmodule Panacea.Application do
   end
 
   defp add_olympus do
-    if Application.get_env(:panacea, :olympus) == true do
-      Panacea.Olympus.Reporter.Reporter
+    case Application.get_env(:panacea, :olympus) do
+      %{url: url} when is_binary(url) and url != "" ->
+        Panacea.Olympus.Reporter
+      _ ->
+        nil
     end
   end
 end

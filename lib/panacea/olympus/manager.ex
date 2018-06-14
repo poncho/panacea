@@ -7,16 +7,29 @@ defmodule Panacea.Olympus.Manager do
   """
   @spec report_health(map) :: tuple
   def report_health(data) do
-    body = Poison.encode!(data)
-    headers = [{"Content-Type", "application/json"}]
-    request = {get_olympus_url(), [], "application/json", body}
-    :httpc.request(:post, request, [], [])
+    body =
+      data
+      |> Poison.encode!
+      |> String.to_charlist
+
+    request = {get_olympus_url(), [], 'application/json', body}
+
+    case :httpc.request(:post, request, [], []) do
+      {:ok, {{_, 200, _,}, _, response}} ->
+        {:ok, response}
+      {:error, {error, _,}} ->
+        {:error, error}
+    end
   end
 
+  # Obtains Olympus URL as charlist for httpc
+  @spec get_olympus_url :: charlist()
   defp get_olympus_url do
-    :panacea
-    |> Application.get_env(:olympus)
-    |> URI.merge(@endpoint)
-    |> URI.to_string
+    url =
+      :panacea
+      |> Application.get_env(:olympus)
+      |> Map.get(:url)
+    
+    String.to_charlist(url <> @endpoint)
   end
 end
